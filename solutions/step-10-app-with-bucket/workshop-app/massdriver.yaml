@@ -1,0 +1,72 @@
+name: workshop-app
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  A stand-in application that runs on a Kubernetes cluster and needs a database
+  and a cache. Deploying it proves the graph is wired.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-app
+# Step 10.7: bumped when the bucket dependency was added.
+version: 0.2.0
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+params:
+  examples:
+    - __name: Development
+      image_tag: latest
+      replicas: 1
+    - __name: Production
+      image_tag: v1.4.2
+      replicas: 3
+  required:
+    - image_tag
+    - replicas
+  properties:
+    image_tag:
+      title: Image Tag
+      description: Container image tag to run. Nothing is pulled; this is a label.
+      type: string
+      default: latest
+    replicas:
+      title: Replicas
+      description: Number of application replicas.
+      type: integer
+      default: 2
+      minimum: 1
+      maximum: 10
+
+dependencies:
+  # Every dependency is a generic type. The app does not know or care whether
+  # the cluster is EKS, the database is RDS, or the cache is ElastiCache.
+  #
+  # The cluster is consumed by every app in the environment, so it arrives as
+  # an environment default. Nobody draws this line.
+  kubernetes_cluster:
+    resource_type: workshop-kubernetes-cluster@~0
+    required: true
+  # The database and cache are wired to this app specifically, so they are
+  # links drawn on the canvas.
+  database:
+    resource_type: workshop-mariadb@~0
+    required: true
+  cache:
+    resource_type: workshop-redis@~0
+    required: true
+  # Optional, and satisfied by the environment default anyway. Shows what an
+  # unconnected dependency looks like in IaC (null).
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+  # STEP 10.8: the bucket, a contract that did not exist until step 10.
+  bucket:
+    resource_type: workshop-s3-bucket@~0
+    required: false
+
+ui:
+  ui:order:
+    - image_tag
+    - replicas
+    - "*"
+  replicas:
+    ui:widget: updown

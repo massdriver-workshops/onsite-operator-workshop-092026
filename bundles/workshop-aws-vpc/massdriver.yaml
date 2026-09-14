@@ -1,0 +1,76 @@
+name: workshop-aws-vpc
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  A VPC with one public and one private subnet per availability zone. Lives in
+  the `network` project, owned by the network team, and shared with the
+  `kubernetes` and `api` projects without a line being drawn.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-aws-vpc
+version: 0.1.0
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+params:
+  examples:
+    - __name: Development
+      cidr: 10.10.0.0/16
+      availability_zones: 2
+      nat_gateway: single
+    - __name: Production
+      cidr: 10.20.0.0/16
+      availability_zones: 3
+      nat_gateway: per_az
+  required:
+    - cidr
+    - availability_zones
+    - nat_gateway
+  properties:
+    cidr:
+      title: VPC CIDR
+      description: Address space for the whole VPC. Must not overlap another VPC you intend to peer with.
+      type: string
+      default: 10.10.0.0/16
+      pattern: ^10\.[0-9]{1,3}\.0\.0/16$
+      message:
+        pattern: "Use a 10.x.0.0/16 range for the workshop."
+      $md.immutable: true
+    availability_zones:
+      title: Availability Zones
+      description: One public and one private subnet are carved out per zone.
+      type: integer
+      default: 2
+      minimum: 2
+      maximum: 3
+      $md.immutable: true
+    nat_gateway:
+      title: NAT Gateway
+      description: How private subnets reach the internet. One gateway is cheaper; one per zone survives a zone outage.
+      type: string
+      default: single
+      oneOf:
+        - const: none
+          title: "None: private subnets are fully isolated"
+        - const: single
+          title: "Single: one gateway, cheapest"
+        - const: per_az
+          title: "Per AZ: one gateway per zone, highly available"
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+
+resources:
+  vpc:
+    resource_type: workshop-vpc@0.1.0
+    required: true
+
+ui:
+  ui:order:
+    - cidr
+    - availability_zones
+    - nat_gateway
+    - "*"
+  availability_zones:
+    ui:widget: updown

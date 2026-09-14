@@ -1,0 +1,104 @@
+name: workshop-s3-asset-bucket
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  An object-storage bucket for application assets. Emits the generic
+  workshop-s3-bucket resource type.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
+version: 0.2.1
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+# STEP 11 SOLUTION: bundles/workshop-s3-asset-bucket/massdriver.yaml with every
+# STEP 11 line uncommented, plus the stretch (storage_class in the resource name).
+params:
+  # STEP 11: presets. A developer starts from one of these instead of an empty
+  # form. `__name` is the label in the preset dropdown.
+  examples:
+    - __name: Development
+      bucket_name: dev-assets
+      versioning_enabled: false
+      retention_days: 7
+      storage_class: standard
+    - __name: Production
+      bucket_name: prod-assets
+      versioning_enabled: true
+      retention_days: 365
+      storage_class: standard_ia
+  required:
+    - bucket_name
+    - versioning_enabled
+    - retention_days
+  properties:
+    bucket_name:
+      type: string
+      # STEP 11: label, help text, and limits. Enforced in the form AND at the API.
+      title: Bucket Name
+      description: Base name for the bucket. A unique suffix is appended automatically, so this does not need to be globally unique.
+      minLength: 3
+      maxLength: 40
+      pattern: ^[a-z0-9][a-z0-9-]*[a-z0-9]$
+      message:
+        pattern: "Lowercase letters, digits, and hyphens. Must start and end with a letter or digit."
+      $md.immutable: true
+    versioning_enabled:
+      type: boolean
+      # STEP 11
+      title: Versioning
+      description: Keep previous versions of overwritten and deleted objects.
+      default: true
+    retention_days:
+      type: integer
+      # STEP 11: nobody can deploy -5 days, no matter how they submit.
+      title: Retention (days)
+      description: Objects older than this are expired by a lifecycle rule.
+      default: 30
+      minimum: 1
+      maximum: 3650
+      message:
+        minimum: "Retention must be at least 1 day."
+        maximum: "Retention cannot exceed 10 years (3650 days)."
+    # STEP 11: a brand-new param. It has a default and is NOT in `required`, so
+    # every instance configured before it existed keeps validating.
+    storage_class:
+      title: Storage Class
+      description: Tier that new objects are written to. Infrequent Access is cheaper to store and more expensive to read.
+      type: string
+      default: standard
+      oneOf:
+        - const: standard
+          title: "Standard: frequently accessed data"
+        - const: standard_ia
+          title: "Standard-IA: accessed less than once a month"
+        - const: glacier_ir
+          title: "Glacier Instant Retrieval: archives that still need millisecond reads"
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+
+resources:
+  bucket:
+    resource_type: workshop-s3-bucket@0.1.0
+    required: true
+
+# STEP 11: the ui block controls order, widgets, placeholders, and help.
+ui:
+  ui:order:
+    # STEP 11: uncomment the four lines below
+    - bucket_name
+    - storage_class
+    - versioning_enabled
+    - retention_days
+    - "*"
+  # STEP 11: uncomment every line from here to the end of the file
+  bucket_name:
+    ui:placeholder: my-app-assets
+    ui:help: "Cannot be changed after the first deploy."
+  storage_class:
+    ui:help: "Not sure? Standard is the right answer for almost everything."
+  retention_days:
+    ui:widget: updown
+    ui:help: "Set to 3650 to effectively keep everything."

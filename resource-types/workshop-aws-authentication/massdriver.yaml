@@ -1,0 +1,74 @@
+# Simulated for the operator workshop. Provisions no real cloud resources.
+#
+# This resource type mirrors the SHAPE of a real cloud-credential resource type.
+# Attendees create one by hand in step 6 through the credential wizard; the
+# markdown under instructions/ is what that wizard shows them. The values are
+# fake, but the structure is realistic on purpose: the lesson is that
+# credentials are just another resource type, consumed by bundles through the
+# same dependency mechanism as a database or a cache.
+#
+# It models ONE authentication method: a static access key pair. A real
+# organization would more likely use an IAM role ARN that the platform assumes.
+# Which method to use, and how to set it up, is a decision the Massdriver
+# admins make once for the org; bundles never care which one it was.
+name: workshop-aws-authentication
+version: 0.1.0
+label: "Workshop: AWS Authentication (simulated)"
+
+ui:
+  # Credentials are owned by the platform team and needed by almost every
+  # instance, so they are an ENVIRONMENT DEFAULT: set once per environment and
+  # every instance with an aws_authentication dependency picks it up without a
+  # line being drawn. Compare workshop-redis, which uses `link` because a cache
+  # is wired to specific consumers.
+  connectionOrientation: environmentDefault
+  instructions:
+    - label: Workshop
+      path: ./instructions/Workshop.md
+
+schema:
+  title: "Workshop: AWS Authentication (simulated)"
+  description: >-
+    Simulated for the operator workshop. Provisions no real cloud resources.
+    Fake access-key material in the shape of a real AWS credential.
+  type: object
+  additionalProperties: false
+  required:
+    - access_key_id
+    - secret_access_key
+    - specs
+  properties:
+    access_key_id:
+      title: Access Key ID
+      description: Fake access key ID. Not sensitive on its own; shown in the UI.
+      type: string
+      examples:
+        - "AKIAWORKSHOPSANDBOX1"
+    secret_access_key:
+      title: Secret Access Key
+      description: Fake secret. Marked sensitive so the UI masks it and exports are audit-logged.
+      type: string
+      $md.sensitive: true
+    specs:
+      title: Specs
+      description: Non-secret facts consumers use to make decisions (region, alias).
+      type: object
+      additionalProperties: false
+      required:
+        - aws
+      properties:
+        aws:
+          title: AWS
+          type: object
+          additionalProperties: false
+          required:
+            - region
+          properties:
+            region:
+              title: Region
+              description: Region every consumer of this credential should default to.
+              type: string
+            account_alias:
+              title: Account Alias
+              description: Human-friendly name for the (fake) account.
+              type: string

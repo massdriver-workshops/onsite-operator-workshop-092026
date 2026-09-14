@@ -1,0 +1,76 @@
+name: workshop-elasticache-redis
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  A Redis-shaped cache bundle deployed into the environment's VPC. Emits the
+  generic workshop-redis resource type, so consumers never know it came from
+  ElastiCache.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-elasticache-redis
+version: 0.1.0
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+params:
+  examples:
+    - __name: Development
+      node_size: cache.t4g.micro
+      num_replicas: 0
+      encryption_in_transit: true
+    - __name: Production
+      node_size: cache.r7g.large
+      num_replicas: 2
+      encryption_in_transit: true
+  required:
+    - node_size
+    - num_replicas
+    - encryption_in_transit
+  properties:
+    node_size:
+      title: Node Size
+      description: Instance class for every node in the replication group.
+      type: string
+      default: cache.t4g.micro
+      oneOf:
+        - const: cache.t4g.micro
+          title: "cache.t4g.micro: 0.5 GiB, dev and test"
+        - const: cache.t4g.medium
+          title: "cache.t4g.medium: 3 GiB, small services"
+        - const: cache.r7g.large
+          title: "cache.r7g.large: 13 GiB, production"
+        - const: cache.r7g.xlarge
+          title: "cache.r7g.xlarge: 26 GiB, production, high traffic"
+    num_replicas:
+      title: Read Replicas
+      description: Replicas per shard. 0 is a single node with no failover.
+      type: integer
+      default: 0
+      minimum: 0
+      maximum: 5
+    encryption_in_transit:
+      title: Encryption In Transit
+      description: Require TLS for client connections. Consumers should use rediss:// when enabled.
+      type: boolean
+      default: true
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+  vpc:
+    resource_type: workshop-vpc@~0
+    required: true
+
+resources:
+  cache:
+    resource_type: workshop-redis@0.1.0
+    required: true
+
+ui:
+  ui:order:
+    - node_size
+    - num_replicas
+    - encryption_in_transit
+    - "*"
+  num_replicas:
+    ui:widget: updown

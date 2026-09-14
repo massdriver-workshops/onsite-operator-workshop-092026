@@ -1,0 +1,113 @@
+name: workshop-s3-asset-bucket
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  Object-storage bucket for application assets, with versioning and a retention
+  policy. Pick a preset to start from a known-good configuration.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
+# Step 11: every publish needs a new version. Stable versions are immutable.
+version: 0.3.0
+
+# Advanced track, module B. Two steps: the bucket, then a legal-hold record
+# that must outlive it. Steps run in order on provision and in reverse on
+# decommission; skip_on_delete leaves the second step's state in place.
+steps:
+  - path: src
+    provisioner: opentofu
+    config:
+      checkov:
+        enable: true
+        # jq over params and dependencies. Warn everywhere; block only production.
+        halt_on_failure: '.params.md_metadata.default_tags["md-environment"] == "production"'
+  - path: retention
+    provisioner: opentofu
+    skip_on_delete: true
+
+params:
+  # Step 11: presets. A developer starts from one of these instead of an
+  # empty form. `__name` is the label in the preset dropdown.
+  examples:
+    - __name: Development
+      bucket_name: dev-assets
+      versioning_enabled: false
+      retention_days: 7
+      storage_class: standard
+    - __name: Production
+      bucket_name: prod-assets
+      versioning_enabled: true
+      retention_days: 365
+      storage_class: standard_ia
+  # storage_class is NOT required. Making a new param required breaks every
+  # instance that was configured before it existed: their stored params no
+  # longer validate and they cannot deploy until someone edits them. A new
+  # param gets a default and stays optional.
+  required:
+    - bucket_name
+    - versioning_enabled
+    - retention_days
+  properties:
+    bucket_name:
+      title: Bucket Name
+      description: Base name for the bucket. A unique suffix is appended automatically, so this does not need to be globally unique.
+      type: string
+      minLength: 3
+      maxLength: 40
+      pattern: ^[a-z0-9][a-z0-9-]*[a-z0-9]$
+      message:
+        pattern: "Lowercase letters, digits, and hyphens. Must start and end with a letter or digit."
+      # Renaming a bucket means a new bucket. Lock it after the first deploy.
+      $md.immutable: true
+    versioning_enabled:
+      title: Versioning
+      description: Keep previous versions of overwritten and deleted objects.
+      type: boolean
+      default: true
+    retention_days:
+      title: Retention (days)
+      description: Objects older than this are expired by a lifecycle rule.
+      type: integer
+      default: 30
+      minimum: 1
+      maximum: 3650
+      message:
+        minimum: "Retention must be at least 1 day."
+        maximum: "Retention cannot exceed 10 years (3650 days)."
+    # Step 11: a new param with real constraints and human-readable labels.
+    storage_class:
+      title: Storage Class
+      description: Tier that new objects are written to. Infrequent Access is cheaper to store and more expensive to read.
+      type: string
+      default: standard
+      oneOf:
+        - const: standard
+          title: "Standard: frequently accessed data"
+        - const: standard_ia
+          title: "Standard-IA: accessed less than once a month"
+        - const: glacier_ir
+          title: "Glacier Instant Retrieval: archives that still need millisecond reads"
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+
+resources:
+  bucket:
+    resource_type: workshop-s3-bucket@0.1.0
+    required: true
+
+# Step 11: the UI schema. This is the developer's form.
+ui:
+  ui:order:
+    - bucket_name
+    - storage_class
+    - versioning_enabled
+    - retention_days
+    - "*"
+  bucket_name:
+    ui:placeholder: my-app-assets
+    ui:help: "Cannot be changed after the first deploy."
+  storage_class:
+    ui:help: "Not sure? Standard is the right answer for almost everything."
+  retention_days:
+    ui:widget: updown
+    ui:help: "Set to 3650 to effectively keep everything."

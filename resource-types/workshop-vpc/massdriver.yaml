@@ -1,0 +1,96 @@
+# Simulated for the operator workshop. Provisions no real cloud resources.
+#
+# Generic network contract. Produced by workshop-aws-vpc today; a different
+# bundle (or an imported resource pointing at a shared corporate VPC) could
+# produce it tomorrow and no consumer would notice. Consumers only see the
+# contract, never the implementation.
+name: workshop-vpc
+version: 0.1.0
+label: "Workshop: VPC (simulated)"
+
+ui:
+  # Networks are owned by the network team and consumed by nearly everything,
+  # so they are an environment default rather than a drawn line. The seed
+  # script sets the VPC produced in the `network` project as the default for
+  # each environment of the `app` project.
+  connectionOrientation: environmentDefault
+
+schema:
+  title: "Workshop: VPC (simulated)"
+  description: >-
+    Simulated for the operator workshop. Provisions no real cloud resources.
+    A VPC with public and private subnets, in the shape of a real network.
+  type: object
+  additionalProperties: false
+  required:
+    - infrastructure
+    - specs
+  properties:
+    infrastructure:
+      title: Infrastructure
+      type: object
+      additionalProperties: false
+      required:
+        - arn
+        - id
+        - cidr
+        - private_subnets
+        - public_subnets
+      properties:
+        arn:
+          title: VPC ARN
+          type: string
+          pattern: ^arn:aws:ec2:[a-z0-9-]+:[0-9]{12}:vpc/vpc-[a-f0-9]+$
+          message:
+            pattern: "Must look like arn:aws:ec2:<region>:<account>:vpc/vpc-<id>"
+        id:
+          title: VPC ID
+          type: string
+          pattern: ^vpc-[a-f0-9]+$
+        cidr:
+          title: CIDR
+          type: string
+        private_subnets:
+          title: Private Subnets
+          description: Where databases and caches go.
+          type: array
+          minItems: 1
+          items: &subnet
+            type: object
+            additionalProperties: false
+            required:
+              - id
+              - cidr
+              - availability_zone
+            properties:
+              id:
+                title: Subnet ID
+                type: string
+              cidr:
+                title: CIDR
+                type: string
+              availability_zone:
+                title: Availability Zone
+                type: string
+        public_subnets:
+          title: Public Subnets
+          description: Where load balancers and NAT gateways go.
+          type: array
+          items: *subnet
+    specs:
+      title: Specs
+      type: object
+      additionalProperties: false
+      required:
+        - aws
+      properties:
+        aws:
+          title: AWS
+          type: object
+          additionalProperties: false
+          required:
+            - region
+          properties:
+            region:
+              title: Region
+              type: string

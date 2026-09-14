@@ -1,0 +1,99 @@
+name: workshop-rds-mariadb
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  A MariaDB database in the shape of an RDS instance. Emits the generic
+  workshop-mariadb resource type, so consumers never know it came from RDS.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-rds-mariadb
+version: 0.1.0
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+params:
+  examples:
+    - __name: Development
+      engine_version: "11.4"
+      instance_class: db.t4g.micro
+      allocated_storage_gb: 20
+      database_name: app
+      multi_az: false
+    - __name: Production
+      engine_version: "11.4"
+      instance_class: db.r6g.large
+      allocated_storage_gb: 200
+      database_name: app
+      multi_az: true
+  required:
+    - engine_version
+    - instance_class
+    - allocated_storage_gb
+    - database_name
+    - multi_az
+  properties:
+    engine_version:
+      title: Engine Version
+      description: MariaDB major version. Upgrades are in place; downgrades are not possible.
+      type: string
+      default: "11.4"
+      enum:
+        - "10.11"
+        - "11.4"
+    instance_class:
+      title: Instance Class
+      description: Compute and memory for the database instance.
+      type: string
+      default: db.t4g.micro
+      oneOf:
+        - const: db.t4g.micro
+          title: "db.t4g.micro: 1 GiB, dev and test"
+        - const: db.t4g.medium
+          title: "db.t4g.medium: 4 GiB, small services"
+        - const: db.r6g.large
+          title: "db.r6g.large: 16 GiB, production"
+    allocated_storage_gb:
+      title: Storage (GB)
+      type: integer
+      default: 20
+      minimum: 20
+      maximum: 2000
+    database_name:
+      title: Database Name
+      description: Initial database created on the instance.
+      type: string
+      default: app
+      pattern: ^[a-z][a-z0-9_]{0,62}$
+      message:
+        pattern: "Lowercase letter first, then lowercase letters, digits, or underscores."
+      $md.immutable: true
+    multi_az:
+      title: Multi-AZ
+      description: Synchronous standby in a second availability zone. Doubles the cost.
+      type: boolean
+      default: false
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+  vpc:
+    resource_type: workshop-vpc@~0
+    required: true
+
+resources:
+  database:
+    resource_type: workshop-mariadb@0.1.0
+    required: true
+
+ui:
+  ui:order:
+    - engine_version
+    - instance_class
+    - allocated_storage_gb
+    - database_name
+    - multi_az
+    - "*"
+  allocated_storage_gb:
+    ui:widget: updown
+  multi_az:
+    ui:help: "Turn on for production. Off is fine for anything you can afford to lose."

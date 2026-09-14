@@ -1,0 +1,98 @@
+# Simulated for the operator workshop. Provisions no real cloud resources.
+#
+# The field list is the easy part. The judgment about WHERE each field goes is
+# the actual lesson, so each placement is explained below.
+name: workshop-redis
+version: 0.1.0
+label: "Workshop: Redis (simulated)"
+
+ui:
+  # Caches are wired to specific consumers, so they appear as a connectable
+  # box on the canvas rather than as an environment-wide default.
+  connectionOrientation: link
+
+schema:
+  title: "Workshop: Redis (simulated)"
+  description: >-
+    Simulated for the operator workshop. Provisions no real cloud resources.
+    Connection details for a Redis-compatible cache.
+  type: object
+  # additionalProperties: false is what makes this a contract. A producer that
+  # emits a field not listed here fails validation at deploy time, instead of
+  # silently leaking implementation details to every consumer.
+  additionalProperties: false
+  required:
+    - infrastructure
+    - authentication
+    - specs
+  properties:
+    # `infrastructure` and `authentication` are what a consumer NEEDS to use
+    # the thing. If an application could not connect without it, it goes in
+    # one of these two, and it is required.
+    #
+    # Identity of the underlying cloud resource. Consumers rarely read this
+    # directly, but IAM policies, alarms, and cost tooling key off it.
+    infrastructure:
+      title: Infrastructure
+      type: object
+      additionalProperties: false
+      required:
+        - arn
+      properties:
+        arn:
+          title: Replication Group ARN
+          type: string
+          pattern: ^arn:aws:elasticache:[a-z0-9-]+:[0-9]{12}:replicationgroup:.+$
+          message:
+            pattern: "Must look like arn:aws:elasticache:<region>:<account>:replicationgroup:<id>"
+    # Everything needed to open a connection lives together under
+    # `authentication`, so a consumer bundle can pass one object through.
+    authentication:
+      title: Authentication
+      type: object
+      additionalProperties: false
+      required:
+        - host
+        - port
+        - auth_token
+      properties:
+        host:
+          title: Host
+          type: string
+        port:
+          title: Port
+          type: integer
+          minimum: 1
+          maximum: 65535
+          default: 6379
+        auth_token:
+          title: Auth Token
+          description: Masked in the UI and API; exports are audit-logged.
+          type: string
+          # Sensitive lives in the RESOURCE TYPE, not in the bundle. The
+          # producer cannot forget to mask it because the contract masks it.
+          $md.sensitive: true
+    # `specs` is what a consumer might want to KNOW to make a decision:
+    # "is TLS on, so should I use rediss://?" "which engine version?"
+    # Nothing here is required to connect.
+    specs:
+      title: Specs
+      type: object
+      additionalProperties: false
+      properties:
+        engine:
+          title: Engine
+          type: string
+          enum:
+            - redis
+        version:
+          title: Engine Version
+          type: string
+        encryption_in_transit:
+          title: Encryption In Transit
+          description: When true, clients should connect with TLS (rediss://).
+          type: boolean
+        # Note what is NOT here: node_size and num_replicas. Those are the
+        # operator's and developer's business (params), not the consumer's.
+        # Putting them in the contract would couple every consumer to a
+        # capacity decision it has no reason to care about.

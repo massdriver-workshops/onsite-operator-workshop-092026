@@ -1,0 +1,92 @@
+# Simulated for the operator workshop. Provisions no real cloud resources.
+#
+# Generic database contract. Produced by workshop-rds-mariadb. Note the name:
+# `mariadb`, not `rds-mariadb`. An Aurora bundle, a Kubernetes-operator bundle,
+# or an imported on-prem database could all produce this same type, and every
+# consumer would connect the same way.
+#
+# In step 10 attendees author workshop-s3-bucket from a field list. This file is the
+# worked example they can look at while they decide where each field goes.
+name: workshop-mariadb
+version: 0.1.0
+label: "Workshop: MariaDB (simulated)"
+
+ui:
+  connectionOrientation: link
+
+schema:
+  title: "Workshop: MariaDB (simulated)"
+  description: >-
+    Simulated for the operator workshop. Provisions no real cloud resources.
+    Connection details for a MariaDB-compatible database.
+  type: object
+  additionalProperties: false
+  required:
+    - infrastructure
+    - authentication
+    - specs
+  properties:
+    # infrastructure + authentication: what a consumer NEEDS to use the database.
+    infrastructure:
+      title: Infrastructure
+      type: object
+      additionalProperties: false
+      required:
+        - arn
+      properties:
+        arn:
+          title: DB Instance ARN
+          type: string
+          pattern: ^arn:aws:rds:[a-z0-9-]+:[0-9]{12}:db:.+$
+          message:
+            pattern: "Must look like arn:aws:rds:<region>:<account>:db:<identifier>"
+    authentication:
+      title: Authentication
+      type: object
+      additionalProperties: false
+      required:
+        - hostname
+        - port
+        - username
+        - password
+        - database
+      properties:
+        hostname:
+          title: Hostname
+          type: string
+        port:
+          title: Port
+          type: integer
+          minimum: 1
+          maximum: 65535
+          default: 3306
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+          # Sensitivity is declared in the contract, so every producer masks it.
+          $md.sensitive: true
+        database:
+          title: Database Name
+          type: string
+    # specs: what a consumer might want to KNOW. Nothing here is needed to connect.
+    specs:
+      title: Specs
+      type: object
+      additionalProperties: false
+      properties:
+        engine:
+          title: Engine
+          type: string
+          enum:
+            - mariadb
+        version:
+          title: Engine Version
+          type: string
+        multi_az:
+          title: Multi-AZ
+          type: boolean
+        # Not here on purpose: instance_class and allocated_storage_gb. Those are
+        # params. A consumer that knew them would be coupled to a capacity choice.

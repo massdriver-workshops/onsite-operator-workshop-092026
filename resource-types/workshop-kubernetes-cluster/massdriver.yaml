@@ -1,0 +1,106 @@
+# Simulated for the operator workshop. Provisions no real cloud resources.
+#
+# Generic compute contract. Produced by workshop-eks-cluster today; a GKE
+# bundle, an on-prem cluster, or an imported resource pointing at a shared
+# cluster could all produce this same type. Consumers only ever see the
+# contract: an endpoint and a way to authenticate to it.
+#
+# Clusters are consumed by every application in an environment, so this type
+# is an environment default rather than a drawn line, the same way the VPC and
+# the credential are.
+name: workshop-kubernetes-cluster
+version: 0.1.0
+label: "Workshop: Kubernetes Cluster (simulated)"
+
+ui:
+  connectionOrientation: environmentDefault
+
+# A download format. The UI shows a button on every resource of this type;
+# the CLI exposes it as `mass resource download <id> -f yaml`. The template is
+# Liquid and receives `artifact.id` and `artifact.payload` (the resource
+# document). The operator who writes the type decides what a consumer can
+# download, and the platform renders it from live data with the secrets in
+# place, so every export is audit-logged.
+exports:
+  - downloadButtonText: Download KubeConfig
+    fileFormat: yaml
+    templatePath: ./exports/kubeconfig.yaml.liquid
+    templateLang: liquid
+
+schema:
+  title: "Workshop: Kubernetes Cluster (simulated)"
+  description: >-
+    Simulated for the operator workshop. Provisions no real cloud resources.
+    Endpoint and credentials for a Kubernetes cluster, in the shape of a real one.
+  type: object
+  additionalProperties: false
+  required:
+    - infrastructure
+    - authentication
+    - specs
+  properties:
+    # infrastructure: identity of the underlying cloud resource.
+    infrastructure:
+      title: Infrastructure
+      type: object
+      additionalProperties: false
+      required:
+        - arn
+        - name
+      properties:
+        arn:
+          title: Cluster ARN
+          type: string
+          pattern: ^arn:aws:eks:[a-z0-9-]+:[0-9]{12}:cluster/.+$
+          message:
+            pattern: "Must look like arn:aws:eks:<region>:<account>:cluster/<name>"
+        name:
+          title: Cluster Name
+          type: string
+    # authentication: everything a consumer needs to talk to the API server.
+    authentication:
+      title: Authentication
+      type: object
+      additionalProperties: false
+      required:
+        - endpoint
+        - cluster_ca_certificate
+        - token
+      properties:
+        endpoint:
+          title: API Server Endpoint
+          type: string
+          pattern: ^https://.+$
+        cluster_ca_certificate:
+          title: Cluster CA Certificate
+          description: Base64-encoded CA bundle. Masked in the UI and API.
+          type: string
+          $md.sensitive: true
+        token:
+          title: Bearer Token
+          description: Masked in the UI and API; exports are audit-logged.
+          type: string
+          $md.sensitive: true
+    # specs: what a consumer might want to KNOW. Nothing here is needed to connect.
+    specs:
+      title: Specs
+      type: object
+      additionalProperties: false
+      required:
+        - aws
+      properties:
+        kubernetes_version:
+          title: Kubernetes Version
+          type: string
+        aws:
+          title: AWS
+          type: object
+          additionalProperties: false
+          required:
+            - region
+          properties:
+            region:
+              title: Region
+              type: string
+        # Not here on purpose: node_count and node_size. Those are params. A
+        # consumer that knew them would be coupled to a capacity choice.

@@ -1,0 +1,40 @@
+name: workshop-s3-asset-bucket
+description: >-
+  Simulated for the operator workshop. Provisions no real cloud resources.
+  An object-storage bucket for application assets. Emits the generic
+  workshop-s3-bucket resource type.
+source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
+# Step 10: 0.1.0 shipped broken, 0.1.1 and 0.1.2 were development releases,
+# and 0.1.2 was then published stable once it deployed green.
+version: 0.1.2
+
+steps:
+  - path: src
+    provisioner: opentofu
+
+params:
+  required:
+    - bucket_name
+    - versioning_enabled
+    - retention_days
+  properties:
+    bucket_name:
+      type: string
+    versioning_enabled:
+      type: boolean
+    retention_days:
+      type: integer
+
+dependencies:
+  aws_authentication:
+    resource_type: workshop-aws-authentication@~0
+    required: true
+
+resources:
+  bucket:
+    resource_type: workshop-s3-bucket@0.1.0
+    required: true
+
+ui:
+  ui:order:
+    - "*"
