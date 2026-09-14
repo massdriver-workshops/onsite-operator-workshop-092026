@@ -4,7 +4,7 @@ description: >-
   A Kubernetes cluster in the shape of EKS. Lives in the `kubernetes` project,
   needs the VPC from the `network` project, and is shared with the `api`
   project as an environment default.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-eks-cluster
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-eks-cluster
 version: 0.1.0
 
 steps:

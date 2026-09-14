@@ -4,7 +4,7 @@ description: >-
   A Redis-shaped cache bundle deployed into the environment's VPC. Emits the
   generic workshop-redis resource type, so consumers never know it came from
   ElastiCache.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-elasticache-redis
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-elasticache-redis
 version: 0.1.0
 
 steps:

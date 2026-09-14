@@ -3,7 +3,7 @@ description: >-
   Simulated for the operator workshop. Provisions no real cloud resources.
   A MariaDB database in the shape of an RDS instance. Emits the generic
   workshop-mariadb resource type, so consumers never know it came from RDS.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-rds-mariadb
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-rds-mariadb
 version: 0.1.0
 
 steps:

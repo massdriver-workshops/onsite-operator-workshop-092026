@@ -3,7 +3,7 @@ description: >-
   Simulated for the operator workshop. Provisions no real cloud resources.
   Object-storage bucket for application assets, with versioning and a retention
   policy. Pick a preset to start from a known-good configuration.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
 # Step 11: every publish needs a new version. Stable versions are immutable.
 version: 0.3.0
 

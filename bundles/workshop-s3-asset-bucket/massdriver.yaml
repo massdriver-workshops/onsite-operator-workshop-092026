@@ -3,7 +3,7 @@ description: >-
   Simulated for the operator workshop. Provisions no real cloud resources.
   An object-storage bucket for application assets. Emits the generic
   workshop-s3-bucket resource type.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-s3-asset-bucket
 # Every publish needs a new version. Stable versions are immutable.
 # STEP 10.6: 0.1.1 after the first fix, 0.1.2 after the second.
 # STEP 11:   0.2.0 with the form improvements below.

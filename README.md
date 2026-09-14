@@ -86,8 +86,8 @@ mass config add workshop --org <your-org-id> --api-key <your-api-key> --url http
 mass whoami
 
 # 2. Clone this repo and confirm everything works. Publishes nothing.
-git clone https://github.com/massdriver-workshops/onsite-operations-workshop-092026.git
-cd onsite-operations-workshop-092026
+git clone https://github.com/massdriver-workshops/onsite-operator-workshop-092026.git
+cd onsite-operator-workshop-092026
 ./seed.sh --check
 ```
 

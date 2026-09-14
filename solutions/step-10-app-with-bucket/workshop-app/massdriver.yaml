@@ -3,7 +3,7 @@ description: >-
   Simulated for the operator workshop. Provisions no real cloud resources.
   A stand-in application that runs on a Kubernetes cluster and needs a database
   and a cache. Deploying it proves the graph is wired.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-app
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-app
 # Step 10.7: bumped when the bucket dependency was added.
 version: 0.2.0
 

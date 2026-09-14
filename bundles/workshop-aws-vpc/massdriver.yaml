@@ -4,7 +4,7 @@ description: >-
   A VPC with one public and one private subnet per availability zone. Lives in
   the `network` project, owned by the network team, and shared with the
   `kubernetes` and `api` projects without a line being drawn.
-source_url: https://github.com/massdriver-workshops/onsite-operations-workshop-092026/tree/main/bundles/workshop-aws-vpc
+source_url: https://github.com/massdriver-workshops/onsite-operator-workshop-092026/tree/main/bundles/workshop-aws-vpc
 version: 0.1.0
 
 steps:
