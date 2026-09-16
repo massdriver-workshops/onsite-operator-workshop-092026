@@ -58,7 +58,7 @@ dependencies:
   aws_authentication:
     resource_type: workshop-aws-authentication@~0
     required: true
-  # STEP 10.8: the bucket, a contract that did not exist until step 10.
+  # STEP 10.9: the bucket, a contract that did not exist until step 10.
   bucket:
     resource_type: workshop-s3-bucket@~0
     required: false

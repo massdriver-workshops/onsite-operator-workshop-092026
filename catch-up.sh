@@ -202,7 +202,7 @@ ensure_deployed api-staging-web "$TMP/web.json" "Step 9: web app"
 
 # ---------------------------------------------------------------------------
 step 10 "a new bundle (from the solutions)"
-TYPE_DIR="$SOLUTIONS/workshop-s3-bucket"
+TYPE_DIR="$REPO_ROOT/resource-types/workshop-s3-bucket"
 BUNDLE_DIR="$SOLUTIONS/step-10-fixed/workshop-s3-asset-bucket"
 [[ -f "$TYPE_DIR/massdriver.yaml" ]] || die "missing $TYPE_DIR/massdriver.yaml"
 [[ -f "$BUNDLE_DIR/massdriver.yaml" ]] || die "missing $BUNDLE_DIR/massdriver.yaml"

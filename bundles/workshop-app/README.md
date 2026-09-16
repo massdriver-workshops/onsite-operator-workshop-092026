@@ -13,9 +13,9 @@ the two `precondition` blocks. In step 9 attendees deploy this app before its
 database and cache exist, and those preconditions are what turns a raw
 Terraform null error into a sentence that says what to do.
 
-In step 10.8 the app grows a fourth, optional dependency on the
+In step 10.9 the app grows a fourth, optional dependency on the
 `workshop-s3-bucket` type that attendees author in step 10. The dependency and
-its output are already in the files, commented out and marked `STEP 10.8`.
+its output are already in the files, commented out and marked `STEP 10.9`.
 Uncommenting them, bumping the version, and republishing is how a consumer
 adopts a contract that did not exist twenty minutes earlier.
 

@@ -36,7 +36,7 @@ locals {
   # Optional dependency: null when nothing is connected.
   aws_region = try(var.aws_authentication.specs.aws.region, "not-connected")
 
-  # STEP 10.8: the bucket is optional, so read it defensively.
+  # STEP 10.9: the bucket is optional, so read it defensively.
   assets_url = try(var.bucket.endpoint.url, "no bucket connected")
 }
 
@@ -88,7 +88,7 @@ output "cache_host" {
   value = local.cache_host
 }
 
-# STEP 10.8
+# STEP 10.9
 output "assets_url" {
   value = local.assets_url
 }

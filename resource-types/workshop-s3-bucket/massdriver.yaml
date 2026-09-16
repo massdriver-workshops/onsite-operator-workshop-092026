@@ -1,10 +1,7 @@
 # Simulated for the operator workshop. Provisions no real cloud resources.
 #
-# STEP 10.1. This resource type is in the repo but NOT published by seed.sh.
-# You publish it yourself, after finishing it. One block is commented out:
-# the `specs` object and its entry in `required`. Read the whole file, decide
-# whether you agree with where each field sits, then remove the leading `# `
-# from every line marked STEP 10.1 and publish.
+# This resource type is in the repo but NOT published by seed.sh. You publish it
+# yourself in step 10.
 #
 # Produced by the workshop-s3-asset-bucket bundle (and by any other bucket bundle an
 # operator writes later: logs bucket, data-lake bucket, CDN origin bucket). The type
@@ -29,8 +26,7 @@ schema:
   required:
     - infrastructure
     - endpoint
-    # STEP 10.1: uncomment the next line
-    # - specs
+    - specs
   properties:
     # infrastructure and endpoint are what a consumer NEEDS to use the bucket.
     infrastructure:
@@ -65,24 +61,23 @@ schema:
     # use the bucket. Not in it, on purpose: retention_days and storage_class.
     # Those are params. A consumer has no business knowing the bucket's
     # retention policy.
-    # STEP 10.1: uncomment every line from here to the end of the file
-    # specs:
-    #   title: Specs
-    #   type: object
-    #   additionalProperties: false
-    #   required:
-    #     - aws
-    #   properties:
-    #     aws:
-    #       title: AWS
-    #       type: object
-    #       additionalProperties: false
-    #       required:
-    #         - region
-    #       properties:
-    #         region:
-    #           title: Region
-    #           type: string
-    #     versioning_enabled:
-    #       title: Versioning Enabled
-    #       type: boolean
+    specs:
+      title: Specs
+      type: object
+      additionalProperties: false
+      required:
+        - aws
+      properties:
+        aws:
+          title: AWS
+          type: object
+          additionalProperties: false
+          required:
+            - region
+          properties:
+            region:
+              title: Region
+              type: string
+        versioning_enabled:
+          title: Versioning Enabled
+          type: boolean

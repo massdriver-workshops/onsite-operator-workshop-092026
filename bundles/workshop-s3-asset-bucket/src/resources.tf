@@ -7,7 +7,7 @@ resource "massdriver_resource" "bucket" {
   resource = jsonencode({
     infrastructure = {
       arn = local.bucket_arn
-      # STEP 10.6, second fix: comment the first line, uncomment the second.
+      # STEP 10.7, second fix: comment the first line, uncomment the second.
       bucket_name = local.bucket_name
       #name        = local.bucket_name
     }
