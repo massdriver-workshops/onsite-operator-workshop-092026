@@ -36,7 +36,7 @@ locals {
   # Optional dependency: null when nothing is connected.
   aws_region = try(var.aws_authentication.specs.aws.region, "not-connected")
 
-  # STEP 10.8: uncomment to consume the bucket
+  # STEP 10.9: uncomment to consume the bucket
   # assets_url = try(var.bucket.endpoint.url, "no bucket connected")
 }
 
@@ -88,7 +88,7 @@ output "cache_host" {
   value = local.cache_host
 }
 
-# STEP 10.8: uncomment to consume the bucket
+# STEP 10.9: uncomment to consume the bucket
 # output "assets_url" {
 #   value = local.assets_url
 # }

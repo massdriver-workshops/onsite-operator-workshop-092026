@@ -23,14 +23,16 @@ One continuous build. Each step exists because the previous one needed it.
 | 7 | [The network](labs/03-the-network.md) | A `network` project with a deployed VPC, and the reason it is its own project |
 | 8 | [The cluster](labs/04-the-cluster.md) | A `kubernetes` project whose cluster reaches the VPC through a remote reference |
 | 9 | [The API](labs/05-the-api.md) | An `api` project with a database, a cache, and an app wired by links, deployed in the wrong order first |
-| 10 | [A new bundle](labs/06-a-new-bundle.md) | A resource type you finished and published, a bundle you published, two deploy failures you debugged on the development channel |
+| 10 | [A new bundle](labs/06-a-new-bundle.md) | A resource type you published, a bundle you published, two deploy failures you debugged on the development channel |
 | 11 | [The developer's form](labs/07-the-developers-form.md) | The same bundle with constraints, presets, and help text. Cut line. |
 | 12, 13 | [Who uses what, and who may](labs/08-who-can-do-what.md) | Repository usage, two groups, a narrowed grant, an attribute of your own, and the experience of being the blocked developer |
 | 14 | [Promote to production](labs/09-promote-to-production.md) | A new `api-production` environment with staging's configuration promoted into it, deployed in one command, and closed to developers without editing a policy |
 
 Finished early? See [stretch goals](labs/stretch-goals.md). Experienced
-room? The facilitator can swap in the advanced labs, [A](labs/10-advanced-permissions.md), [B](labs/11-advanced-multi-step.md), and [C](labs/12-advanced-custom-provisioner.md):
-permission patterns, multi-step bundles, and a custom provisioner.
+room? The facilitator can swap in the advanced labs, [A](labs/10-advanced-permissions.md), [B](labs/11-advanced-multi-step.md), [C](labs/12-advanced-custom-provisioner.md), and [D](labs/13-advanced-claude-architect.md):
+permission patterns, multi-step bundles, a custom provisioner, and the
+Massdriver Claude plugin building a bundle against the catalog you just built.
+D ships no files on purpose — it is generated live and thrown away.
 
 ## The graph at the end
 
@@ -69,7 +71,7 @@ gate the destination, not the person, and there is no admin bypass.
 | `workshop-kubernetes-cluster` | `workshop-eks-cluster` |
 | `workshop-mariadb` | `workshop-rds-mariadb` |
 | `workshop-redis` | `workshop-elasticache-redis` |
-| `workshop-s3-bucket` (in the repo, not seeded; attendees finish and publish it in step 10) | `workshop-s3-asset-bucket` (attendees publish this in step 10) |
+| `workshop-s3-bucket` (in the repo, not seeded; attendees publish it in step 10) | `workshop-s3-asset-bucket` (attendees publish this in step 10) |
 
 A logs bucket, a data-lake bucket, and an asset bucket are three bundles that
 emit one type. An Aurora bundle could replace the RDS one and every consumer
@@ -105,16 +107,16 @@ resource-types/                 Contracts. Published by seed.sh.
   workshop-kubernetes-cluster/  Generic cluster contract. Its exports/ folder renders a downloadable kubeconfig.
   workshop-mariadb/             Generic database contract. The worked example for step 10.
   workshop-redis/               Generic cache contract.
-  workshop-s3-bucket/           Step 10. Not seeded. One block commented out for attendees to finish.
+  workshop-s3-bucket/           Step 10. Not seeded. Attendees read it and publish it.
 bundles/
   workshop-aws-vpc/             Step 7. Deployed into `network`.
   workshop-eks-cluster/         Step 8. Deployed into `kubernetes`.
   workshop-rds-mariadb/         Step 9. A finished producer to learn from.
   workshop-elasticache-redis/   Step 9. Another finished producer.
-  workshop-app/                 Step 9. The consumer. Has a commented block for step 10.8.
+  workshop-app/                 Step 9. The consumer. Has a commented block for step 10.9.
   workshop-s3-asset-bucket/     Step 10. Not seeded. Ships with two bugs you will find.
-labs/                           One handout per step, stretch goals, and the three advanced labs
-solutions/                      Finished state of step 10, 10.8, 11, and the multi-step bundle, plus the finished resource type
+labs/                           One handout per step, stretch goals, and the four advanced labs
+solutions/                      Finished state of step 10, 10.9, 11, and the multi-step bundle
 provisioners/provisioner-echo/  Custom provisioner image for advanced lab C
 ```
 

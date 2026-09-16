@@ -24,7 +24,7 @@
 #
 # It creates NO projects, environments, or resources. You build those by hand
 # during the session. The S3 bucket type and bundle are also left out on
-# purpose: you author and publish those yourself in step 10.
+# purpose: you publish those yourself in step 10.
 #
 # Requires: mass, jq.
 
