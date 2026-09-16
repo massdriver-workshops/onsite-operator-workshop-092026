@@ -71,7 +71,7 @@ gate the destination, not the person, and there is no admin bypass.
 | `workshop-kubernetes-cluster` | `workshop-eks-cluster` |
 | `workshop-mariadb` | `workshop-rds-mariadb` |
 | `workshop-redis` | `workshop-elasticache-redis` |
-| `workshop-s3-bucket` (in the repo, not seeded; attendees finish and publish it in step 10) | `workshop-s3-asset-bucket` (attendees publish this in step 10) |
+| `workshop-s3-bucket` (in the repo, not seeded; attendees publish it in step 10) | `workshop-s3-asset-bucket` (attendees publish this in step 10) |
 
 A logs bucket, a data-lake bucket, and an asset bucket are three bundles that
 emit one type. An Aurora bundle could replace the RDS one and every consumer
@@ -107,16 +107,16 @@ resource-types/                 Contracts. Published by seed.sh.
   workshop-kubernetes-cluster/  Generic cluster contract. Its exports/ folder renders a downloadable kubeconfig.
   workshop-mariadb/             Generic database contract. The worked example for step 10.
   workshop-redis/               Generic cache contract.
-  workshop-s3-bucket/           Step 10. Not seeded. One block commented out for attendees to finish.
+  workshop-s3-bucket/           Step 10. Not seeded. Attendees read it and publish it.
 bundles/
   workshop-aws-vpc/             Step 7. Deployed into `network`.
   workshop-eks-cluster/         Step 8. Deployed into `kubernetes`.
   workshop-rds-mariadb/         Step 9. A finished producer to learn from.
   workshop-elasticache-redis/   Step 9. Another finished producer.
-  workshop-app/                 Step 9. The consumer. Has a commented block for step 10.8.
+  workshop-app/                 Step 9. The consumer. Has a commented block for step 10.9.
   workshop-s3-asset-bucket/     Step 10. Not seeded. Ships with two bugs you will find.
 labs/                           One handout per step, stretch goals, and the four advanced labs
-solutions/                      Finished state of step 10, 10.8, 11, and the multi-step bundle, plus the finished resource type
+solutions/                      Finished state of step 10, 10.9, 11, and the multi-step bundle
 provisioners/provisioner-echo/  Custom provisioner image for advanced lab C
 ```
 

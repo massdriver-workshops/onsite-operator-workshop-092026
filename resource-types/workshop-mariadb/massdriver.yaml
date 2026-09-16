@@ -5,8 +5,8 @@
 # or an imported on-prem database could all produce this same type, and every
 # consumer would connect the same way.
 #
-# In step 10 attendees author workshop-s3-bucket from a field list. This file is the
-# worked example they can look at while they decide where each field goes.
+# In step 10 attendees read and publish workshop-s3-bucket. This file is the worked
+# example they can look at while they decide where each field belongs.
 name: workshop-mariadb
 version: 0.1.0
 label: "Workshop: MariaDB (simulated)"
